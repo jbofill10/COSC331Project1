@@ -2,6 +2,7 @@
 CRUD Project for COSC 331
 
 Install XAMMP Control Panel and start both Apache and MySQL connections.
+
 Make a database named student with 7 columns titled: 
 id, 
 firstName, 
