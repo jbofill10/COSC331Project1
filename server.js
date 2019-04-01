@@ -17,6 +17,19 @@ db.on('error', (err)=>{
     console.error(err.toString());
 })
 
+app.get("/students", (req,res) => {
+    db.query("SELECT * FROM project.student", (err,result)=>{
+        if(err){
+            console.log(err)
+            res.status(400).send(err)
+        }else{
+            res.json(result)
+        }
+    })
+})
+
+console.log("Connected as: " + db.threadId)
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}))
 
