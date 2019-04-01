@@ -85,19 +85,43 @@ app.patch('/students', [
         })
 
     }
-
 )
-app.delete('/project/:id', (req,res) =>{
-    db.query(' DELETE FROM project.student WHERE id=?;', [req.params.id], (error, results)=>{
+
+app.put("/students", [    
+    body('id').not().isEmpty().isInt().isLength(7),
+    body('firstName').not().isEmpty().isAlphanumeric(),
+    body('lastName').not().isEmpty().isAlphanumeric(),
+    body('year').not().isEmpty().isInt().isLength(4),
+    body('age').not().isEmpty().isInt(),
+    body('major').not().isEmpty().isAlphanumeric(),
+    body('gpa').not().isEmpty().isFloat()
+], (req,res)=>{
+    const err = validationResult(req);
+    if(!err.isEmpty()) return res.status(442).json({err:err.array()})
+
+    db.query("UPDATE project.student SET ? WHERE id = ?",
+    [pick(req.body, ['firstName','lastName','year','age','major','gpa']), req.body.id],
+    (error,result)=>{
+        if(error){
+            console.log(error)
+            res.status(400).send(error)
+        }else{
+            res.json(result)
+        }
+    })
+}
+)
+
+app.delete('/students/:id', (req,res) =>{
+    db.query('DELETE FROM project.student WHERE id = ?;', [req.params.id], (error, result)=>{
     
       if (error) {
         console.log(error)
         res.status(400).send(error)
       } else {
-        res.status(204).end();
+        res.json(result);
       }
   })
 })
-
 
 app.listen(port, () => console.log(`listening on port ${port}`));
