@@ -9,7 +9,7 @@ lastName,
 year, 
 age, 
 major, 
-gpa
+and gpa
 
 In the server.js file change the username and password to whatever you made your SQL username and password inside the db constant
 
