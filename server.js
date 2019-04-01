@@ -61,4 +61,32 @@ app.post('/students',[
         })
 })
 
+app.patch('/students', [
+	body("id").not().isEmpty().isInt().isLength(7),
+	body("firstName").optional().isAlphanumeric(),
+	body("lastName").optional().isAlphanumeric(),
+	body("year").optional().isInt().isLength(4),
+	body("age").optional().isInt(),
+	body("major").optional().isAlphanumeric(),
+	body("gpa").optional().isFloat()
+], (req, res) => {
+        const err = validationResult(req);
+        if(!err.isEmpty()) return res.status(442).json({err:err.array()})
+
+        db.query("UPDATE project.student SET ? WHERE id = ?",
+        [pick(req.body, ['firstName','lastName','year','age','major','gpa']), req.body.id],
+        (error, result)=>{
+            if(error){
+                console.log(error)
+                res.status(400).send(error);
+            }else{
+                res.json(result)
+            }
+        })
+
+    }
+
+)
+
+
 app.listen(port, () => console.log(`listening on port ${port}`));
