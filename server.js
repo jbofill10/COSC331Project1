@@ -87,6 +87,17 @@ app.patch('/students', [
     }
 
 )
+app.delete('/project/:id', (req,res) =>{
+    db.query(' DELETE FROM project.student WHERE id=?;', [req.params.id], (error, results)=>{
+    
+      if (error) {
+        console.log(error)
+        res.status(400).send(error)
+      } else {
+        res.status(204).end();
+      }
+  })
+})
 
 
 app.listen(port, () => console.log(`listening on port ${port}`));
