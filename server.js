@@ -4,6 +4,7 @@ const bodyParser = require("body-parser")
 const {body, validationResult} = require('express-validator/check')
 const pick = require("object.pick")
 
+// Set up SQL connection
 const db = mysql.createConnection({
     host: "127.0.0.1",
     user: "admin",
@@ -16,16 +17,21 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}))
 
+// Connect to SQL server
 db.connect();
 
 db.on('error', (err)=>{
     console.error(err.toString());
 })
 
+app.listen(port, () => console.log(`listening on port ${port}`));
+
+// Hello world route
 app.get("/", (req,res)=> res.send("COSC 331 Project 1"))
 
 console.log("Connected as: admin")
 
+// Gets all the students in the DB
 app.get("/students", (req,res) => {
     db.query("SELECT * FROM project.student", (err,result)=>{
         if(err){
@@ -37,6 +43,7 @@ app.get("/students", (req,res) => {
     })
 })
 
+// Adds a new student
 app.post('/students',[
     body('id').not().isEmpty().isInt().isLength(7),
     body('firstName').not().isEmpty().isAlphanumeric(),
@@ -61,6 +68,7 @@ app.post('/students',[
         })
 })
 
+// Edits a field of a student's id
 app.patch('/students', [
 	body("id").not().isEmpty().isInt().isLength(7),
 	body("firstName").optional().isAlphanumeric(),
@@ -87,6 +95,7 @@ app.patch('/students', [
     }
 )
 
+// Edits whole student
 app.put("/students", [    
     body('id').not().isEmpty().isInt().isLength(7),
     body('firstName').not().isEmpty().isAlphanumeric(),
@@ -112,6 +121,7 @@ app.put("/students", [
 }
 )
 
+// Deletes student's id by using specific ID from DB in route
 app.delete('/students/:id', (req,res) =>{
     db.query('DELETE FROM project.student WHERE id = ?;', [req.params.id], (error, result)=>{
     
@@ -123,5 +133,3 @@ app.delete('/students/:id', (req,res) =>{
       }
   })
 })
-
-app.listen(port, () => console.log(`listening on port ${port}`));
